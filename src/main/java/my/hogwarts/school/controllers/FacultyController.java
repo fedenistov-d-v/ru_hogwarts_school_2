@@ -1,6 +1,7 @@
 package my.hogwarts.school.controllers;
 
 import my.hogwarts.school.model.Faculty;
+import my.hogwarts.school.model.Student;
 import my.hogwarts.school.services.FacultyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,4 +51,21 @@ public class FacultyController {
         }
         return ResponseEntity.ok(Collections.emptyList());
     }
+
+    @GetMapping("/find_all")
+    public ResponseEntity<Collection<Faculty>> findAll(@RequestParam(required = false) String string) {
+        if (string != null && !string.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByNameOrColor(string));
+        }
+        return ResponseEntity.ok(Collections.emptyList());
+    }
+
+    @GetMapping("/students/{idFaculty}")
+    public ResponseEntity<Collection<Student>> findStudentsByFacultyId(@PathVariable Long idFaculty) {
+        Faculty findStudent = facultyService.findById(idFaculty);
+        if (findStudent == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(facultyService.findStudentsByFacultyId(idFaculty));
+    }
+
+
 }
